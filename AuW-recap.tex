@@ -7,6 +7,8 @@
 \usepackage{tkz-berge}
 \usepackage{hyperref}
 \usepackage{float}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{todonotes}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
@@ -32,7 +34,9 @@ Cannot be used during the exam, but it's a nice short recap of everything done i
 \section{Last semester}
 Go read again about MST algorithms and so on.
 
-\section{Zusammenhang}
+\section{Graphentheorie}
+
+\subsection{Zusammenhang}
 \begin{definition}
     A graph $G=(V,E)$ is \textit{k-zusammenhängend} if $|V| \ge k + 1$ and
     for all $X \subseteq V,\ |X| < k$ the following is true:
@@ -95,11 +99,11 @@ Go read again about MST algorithms and so on.
 \begin{definition}
     $G = (V,E)$ is zusammenhängend. For $e,f \in E$ we define the relation
     \[ e \sim f \Leftrightarrow e = f\ \mbox{or there is a Kreis containing both edges} \]
-    
+
     This is an equivalence relation. Each equivalence class is called a \text{Block} (plural \text{Blöcke}).
 \end{definition}
 
-\section{Kreise}
+\subsection{Kreise}
 
 \begin{definition}
     An \textit{Eulertour} in a graph $G$ is a closed path (\textit{Zyklus}) that contains every edge $\in E$ exactly once.
@@ -108,7 +112,7 @@ Go read again about MST algorithms and so on.
 \end{definition}
 
 \begin{definition}
-    
+
 \end{definition}
 
 \begin{theorem}
@@ -157,7 +161,7 @@ Go read again about MST algorithms and so on.
     It find the MST in $\BO(n^2)$ and then uses it to find the H.k.
 \end{theorem}
 
-\section{Matching}
+\subsection{Matching}
 
 \begin{definition}
     A set of edges $M \subseteq E$ is called \textit{Matching} in a graph $G$ if
@@ -175,17 +179,112 @@ Go read again about MST algorithms and so on.
         \item \textit{inklusionsmaximal} if $M \cup \left\{ e \right\}$ is not a matching for all $e \in E \setminus M$.
         \item \textit{kardinalitätsmaximal} if $|M| \ge |M'|$ for all matchings $M'$ in $G$.
     \end{itemize}
- 
+
     Note that \textit{kardinalitätsmaximal} $\Rightarrow$ \textit{inklusionsmaximal} (the opposite might not be true).
 \end{definition}
 
 \begin{theorem}
+    \begin{algorithm}
+        \caption{Greedy-Matching}
+        \KwResult{The inklusionsmaximales matching $M$}
+        \While{$E \ne \emptyset$}{
+            choose an edge $e \in E$\;
+            $M \gets M \cup \left\{ e \right\}$\;
+            remove $e$ and all incident edges from $G$\;
+        }
+    \end{algorithm}
+
     The greedy-matching algorithm finds an inklusionsmaximal Matching in time $\BO(|E|)$
     for which the following holds: $|M_{Greedy}| \ge \frac{1}{2} |M_{max}|$, where $M_{max}$ is a kardinalitätsmaximales Matching.
 \end{theorem}
 
 \begin{theorem}[Berge]
-    Let $M$ be a matching in $G$ that is not kardinalitätsmaximal, then there is an augmented path to $M$.
+    Let $M$ be a matching in $G$ that is not k.maximal, then there is an augmenting path to $M$.
+    \todo{Algos at page 65 and 67}
 \end{theorem}
+
+\begin{theorem}
+    Is $n$ even $K_n$ a complete graph, then it's possible to find a \textit{minimal perkeftes Matching} in time $\BO(n^3)$
+\end{theorem}
+
+\begin{theorem}
+    There's a 3/2-Approximationsalgorithmus for the TSP that runs in $\BO(n^3)$.
+\end{theorem}
+
+\begin{definition}
+    \textit{Nachbarnschaft einer Knotenmenge} $X \subseteq V$:
+    \[ N(X) := \bigcup_{v \in X} N(v) \]
+\end{definition}
+
+\begin{theorem}[Hall, Heiratssatz]
+    For a bipartite graph $G = (A \uplus B, E)$ theres a matching $M$ with $|M| = |A|$ if and only if $|N(X)| \ge |X|$ for all $X \subseteq A$.
+\end{theorem}
+
+\begin{definition}
+    A bipartite graph is called \textit{k-regulär} if every vertex has degree $k$.
+\end{definition}
+
+\begin{theorem}
+    Let $G$ be a k-regular bipartite graph. Then there's $M_1, ..., M_k$ so that $E = M_1 \uplus M_2 \uplus ... \uplus M_k$ and all
+    $M_i, 1 \le i \le k$ are perfect matchings.
+\end{theorem}
+
+\begin{theorem}
+    Is $G = (V, E)$ a $2^k$-regular bipartite Graph, then it's possible to find a perfect matching in $\BO(|E|)$.
+\end{theorem}
+
+\subsection{Färbungen}
+
+\begin{definition}
+    A \textit{(Knoten)-Färbung} (vertex coloring) of a graph $G$ with $k$ colors is $c: V \to [k]$, so that
+    \[ c(u) \ne c(v)\ \forall \left\{ u, v \right\} \in E \]
+
+    The \textit{chromatische Zahl} (chromatic number) $X(G)$ of a graph is the minimal amount of colors that can be used to
+    color $G$.
+\end{definition}
+
+\begin{theorem}
+    A graph is bipartite if and only if doesn't contain any Kreis of odd length.
+\end{theorem}
+
+\begin{theorem}[Vierfarbensatz]
+    Every map can be colored with 4 colors.
+\end{theorem}
+
+\begin{theorem}
+    \begin{algorithm}
+        \caption{Greedy-Färbung}
+        \KwData{$G$}
+        \KwResult{array $c$ mapping each vertex to a color}
+        $c(v_1) \gets 1$\;
+        \For{$i = 2, \dots, n$}{
+            $c(v_i) \gets \min \left\{ k \in \mathbb{N} \mid k \ne c(u)\ \mbox{for all}\ u \in N(v_i) \cap \left\{ v_1, ..., v_{i - 1} \right\} \right\}$
+        }
+    \end{algorithm}
+
+    Let $G$ be a connected graph and $C(G)$ the amount of colors used by the Greedy-Färbung algorithm.
+    Then
+    \[ \mathcal{X}(G) \le C(G) \le \Delta(G) + 1 \]
+    Where $\Delta(G) := \max_{v \in V} deg(v)$ is the max degree in the graph.
+
+    The running time is $\BO(|E|)$ if an adjacency list is used.
+\end{theorem}
+
+\begin{theorem}[Brooks]
+    Let $G$ be a connected graph that is neither complete nor an odd Kreis ($G \ne K_n$ and $G \ne C_{2n+1}$).
+    Then
+    \[ \mathcal{X}(G) \le \Delta(G) \]
+    And there's an algorithm that can color the vertices of $G$ in time $\BO(|E|)$ and with $\Delta(G)$ colors.
+\end{theorem}
+
+\begin{theorem}[Mycielski-Konstruktion]
+    For all $k \ge 2$ there's a triangle-free graph $G_k$ with $\mathcal{X}(G) \ge k$.
+\end{theorem}
+
+\begin{theorem}
+    Every 3-färbbaren graph can be colored in time $\BO(|E|)$ with $\BO(\sqrt{|V|})$ colors.
+\end{theorem}
+
+\section{Randomized algorithms}
 
 \end{document}
