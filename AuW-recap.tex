@@ -16,8 +16,13 @@
 \newtheorem{note}{Note}
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{plain}
+\newtheorem{corollary}{Corollary}
 
 \newcommand{\BO}{\mathcal{O}}
+\newcommand{\E}{\mathbb{E}}
 
 \title{AuW Recap}
 \author{
@@ -287,4 +292,300 @@ Go read again about MST algorithms and so on.
 
 \section{Randomized algorithms}
 
+\subsection{Grundbegriffe und Notationen}
+
+\begin{definition}
+    A \textit{diskreter Wahrscheinlichkeitsraum} is defined through a \textit{Ergebnismenge}
+    $\Omega = \left\{ \omega_1, \omega_2, ... \right\}$ of \textit{Elementarereignissen}.
+
+    A probability $\Pr[\omega_i]$ corresponds to each $\omega_i$.
+    \[0 \le \Pr[w_i] \le 1,\quad \sum_{\omega \in \Omega} \Pr[\omega] = 1\]
+
+    A set $E \subseteq \Omega$ is called \textit{Ereignis}. The probability is defined as
+    \[ \Pr[E] := \sum_{\omega \in E} \Pr[\omega] \]
+
+    The \textit{Komplementärereignis} zu $E$ is defined as $\overline{E} := \Omega \setminus E$
+\end{definition}
+
+\begin{lemma}
+    For \textit{Ereignisse} $A,B$:
+    \begin{enumerate}
+        \item $\Pr[\emptyset] = 0, \Pr[\Omega] = 1$
+        \item $0 \le \Pr[A] \le 1$
+        \item $\Pr[\overline{A}] = 1 - \Pr[A]$
+        \item If $A \subseteq B$ then $\Pr[A] \le \Pr[B]$
+    \end{enumerate}
+\end{lemma}
+
+\begin{theorem}[Additionssatz]
+    When the \textit{Ereignisse} are pairwise disjoint then
+    \[ \Pr \left[ \bigcup_{i=1}^n A_i \right] = \sum_{i=1}^n \Pr[A_i] \]
+    For infinite sets of disjoint Ereignissen $A_1, A_2, ...$ then
+    \[ \Pr \left[ \bigcup_{i=1}^\infty A_i \right] = \sum_{i=1}^\infty \Pr[A_i] \]
+\end{theorem}
+
+\begin{theorem}[Siebformel, Prinzip der Inklusion/Exklusion]
+    For Ereignisse $A_1, ..., A_n \ (n \ge 2)$:
+    \[ \Pr \left[ \bigcup_{i=1}^n A_i \right] = \sum_{l=1}^n (-1)^{l+1} \sum_{1 \le i_1 < ... < i_l \le n} \Pr[A_{i_1} \cap ... \cap A_{i_l}] \]
+\end{theorem}
+
+\begin{lemma}[A special case of the Siebformel]
+    Let $\Omega = A_1 \cup ... \cup A_n$ with $\Pr[\omega] = 1/|\Omega|$,
+    where $A_i$ are finite sets.
+    Then
+    \[ | \bigcup_{i=1}^n A_i | = \sum_{l=1}^n (-1)^{l+1} \sum_{1 \le i_1 < ... < i_l \le n} |A_{i_1} \cap ... \cap A_{i_l}| \]
+\end{lemma}
+
+\begin{corollary}[Boolsche Ungleichung, Union Bound]
+    For some Ereignisse $A_1, ..., A_n$:
+    \[ \Pr \left[ \bigcup_{i=1}^n A_i \right] \le \sum_{i=1}^n \Pr[A_i]\]
+    For an infinite set of Ereignisse, replace $n$ with $\infty$.
+\end{corollary}
+
+\subsection{Bedingte Wahrscheinlichkeiten}
+
+\begin{definition}
+    Let $A$ and $B$ be Ereignisse with $\Pr[B] > 0$.
+    The \textit{bedingte Wahrscheinlichkeit} $Pr[A|B]$ of $A$ given $B$
+    is defined through
+    \[ \Pr[A|B] := \frac{\Pr[A \cap B]}{\Pr[B]} \]
+\end{definition}
+
+\begin{theorem}[Multiplikationssatz]
+    The Ereignisse $A_1, ..., A_n$ are given.
+    If $\Pr[A_1 \cap ... \cap A_n] > 0$, then:
+    \[ \Pr[A_1 \cap ... \cap A_n] = \Pr[A_1] \cdot \Pr[A_2 | A_1] \cdot \Pr[A_3 | A_1 \cap A_2] \cdot ... \cdot \Pr[A_n | A_1 \cap ... \cap A_{n-1}] \]
+\end{theorem}
+
+\begin{theorem}[Satz von der totalen Wahrscheinlichkeit]
+    $A_1, ..., A_n$ are pairwise disjoint and $B \subseteq A_1 \cup ... \cup A_n$.
+    Then
+    \[ \Pr[B] = \sum_{i=1}^n \Pr[B|A_i] \cdot \Pr[A_i] \]
+    Analogous for an infinite set of $A_i$s.
+\end{theorem}
+
+\begin{theorem}[Satz von Bayes]
+    $A_1, ..., A_n$ pairwise disjoint.
+    Let $B \subseteq A_1 \cup ... \cup A_n$ with $\Pr[B] > 0$.
+    Then for any $i = 1,...,n$:
+    \[ \Pr[A_i | B] = \frac{\Pr[A_i \cap B]}{\Pr[B]} = \frac{\Pr[B|A_i] \cdot \Pr[A_i]}{\sum_{j=1}^n \Pr[B|A_j] \cdot \Pr[A_j]} \]
+
+    Analogous for $\infty$ instead of $n$.
+\end{theorem}
+
+\subsection{Unabhängigkeit}
+
+\begin{definition}
+    Die Ereignisse $A, B$ are \textit{unabhängig} when
+    \[ \Pr[A \cap B] = \Pr[A] \cdot \Pr[B] \]
+\end{definition}
+
+\begin{definition}
+    Die Ereignisse $A_1, ..., A_n$ are unabhängig when for all $I \subseteq \left\{ 1, ..., n \right\}$
+    with $I = {i_1, ..., i_k}$:
+    \[ \Pr \left[ A_{i_1} \cap ... \cap A_{i_k} \right] = \Pr \left[ A_{i_1}] \cdot ... \cdot \Pr[A_{i_k} \right] \]
+\end{definition}
+
+\begin{lemma}
+    Die Ereignisse $A_1, ..., A_n$ are unabängig \textbf{if and only if}
+    \[ \forall (s_1, .., s_n) \in \left\{ 0, 1 \right\}^n\ \left( \Pr[A_1^{s_1} \cap ... \cap A_n^{s_n}] = \Pr[A_1^{s_1}] \cdot \Pr[A_n^{s_n}] \right) \]
+    where $A_i^0 = \overline{A_i}$ and $A_i^1 = A_i$
+\end{lemma}
+
+\begin{lemma}
+    $A, B, C$ unabängige Ereignisse.
+    Then $A \cap B$ and $C$ and $A \cup B$ and $C$ are also independent.
+\end{lemma}
+
+\subsection{Zufallsvariablen}
+
+\begin{definition}
+    A \textit{Zufallsvariable} is $X:\Omega \to \mathbb{R}$,
+    where $\Omega$ is the Ergebnismenge of a Wahrscheinlichkeitsraum.
+
+    The \textit{Wertebereich} of a Zufallsvariable is
+    \[ W_X := X(\Omega) = \left\{ x \in \mathbb{R} \mid \exists \omega \in \Omega\ \mbox{with}\ X(\omega) = x \right\} \]
+\end{definition}
+
+\begin{definition}
+    The \textit{Erwartungswert} of $X$ is $\E[X]$, defined as
+    \[ \E[X] := \sum_{x \in W_x} x \cdot \Pr[X = x] \]
+    when the sum absolut konvergiert. Otherwise the Erwartungswert is \textit{undefiniert / undefined}.
+\end{definition}
+
+\begin{lemma}
+    Is $X$ a Zufallsvariable, then:
+    \[ \E[X] = \sum_{\omega \in \Omega} X(\omega) \cdot \Pr[\omega] \]
+\end{lemma}
+
+\begin{theorem}
+    $X$ Zufallsvariable wit $W_X \subseteq \mathbb{N}_0$. Then
+    \[ \E[X] = \sum_{i=1}\infty \Pr[X \ge i] \]
+\end{theorem}
+
+\begin{theorem}
+    $X$ a Zufallsvariable. For pairwise disjoint Ereignisse $A_1, ..., A_n$ with $A_1 \cup ... \cup A_n = \Omega$ and
+    $\Pr[A_1],...,\Pr[A_n] > 0$ then
+    \[ \E[X] = \sum_{i=1}^n \E[X | A_i] \cdot \Pr[A_i] \]
+
+    Analogous for $\infty$ instead of $n$.
+\end{theorem}
+
+\begin{theorem}[Linearität des Erwartungswert]
+    For $X_1, ..., X_n$ and $X := a_1 X_1 + ... + a_n X_n + b$ with $a_1, ..., a_n, b \in \mathbb{R}$:
+    \[ \E[X] = a_1 \E[X_1] + ... + a_n \E[X_n] + b \]
+\end{theorem}
+
+\begin{note}
+    For an Ereignis $A \subseteq \Omega$ the \textit{Indikatorvariable} $X_A$ is defined as
+    \[ X_A(\omega) := \begin{cases}
+            1, & \mbox{if}\ \omega \in A \\
+            0, & \mbox{otherwise}        \\
+        \end{cases} \]
+
+    Also $\E[X_A] = \Pr[A]$
+\end{note}
+
+\begin{definition}
+    For a Zufallsvariable $X$ mit $\mu = \E[X]$ the \textit{Varianz} $Var[X]$ is defined through
+    \[ Var[X] := \E[(X - \mu)^2] = \sum_{x \in W_X} (x - \mu)^2 \Pr[X = x] \]
+
+    The \textit{Standardabweichung} of $X$ is $\sigma := \sqrt{Var[X]}$.
+\end{definition}
+
+\begin{theorem}
+    For any Zufallsvariable $X$ and $a,b \in \mathbb{R}$:
+    \[ Var[X] = \E[X^2] - \E[X]^2 \]
+    \[ Var[a \cdot X + b] = a^2 \cdot Var[X] \]
+\end{theorem}
+
+\begin{definition}
+    For a Zufallsvariable $X$, $\E[X^k]$ is called \textit{$k$-te Moment} and
+    $\E[(X - \E[X])^k]$ is called \textit{$k$-te zentrale Moment}.
+\end{definition}
+
+\subsection{Wichtige diskrete Verteilungen}
+
+\todo{Maybe write, or use the Formelsammlung}
+Bernoulli, Binomial, Geometrische, Poisson
+
+\subsection{Mehrere Zufallsvariablen}
+
+\begin{definition}
+    Zufallsvariablen $X_1, ..., X_n$ are \textit{unabhängig} if and only if
+    for all $(x_1, ..., x_n) \in W_{X_1} \times ... \times W_{X_n}$ the following holds:
+    \[ \Pr[X_1 = x_1, ..., X_n = x_n] = \Pr[X_1 = x_1] \cdot ... \cdot \Pr[X_n = x_n] \]
+\end{definition}
+
+\begin{theorem}[Linearität des Erwartungswerts]
+    For $X_1, ..., X_n$ and $X := a_1 X_1 + ... + a_n X_n$ with $a_i \in \mathbb{R}$:
+    \[ \E[X] = a_1 \E[X_1] + ... + a_n \E[X_n] \]
+\end{theorem}
+
+\begin{theorem}[Multiplikativität des Erwartungswerts]
+    For $X_1, ..., X_n$:
+    \[ \E[X_1 \cdot ... \cdot X_n] = \E[X_1] \cdot ... \cdot \E[X_n] \]
+\end{theorem}
+
+\begin{theorem}
+    For independent $X_1, ..., X_n$ and $X := X_1 + ... + X_n$ then
+    \[ Var[X] = Var[X_1] + ... + Var[X_n] \]
+\end{theorem}
+
+\subsection{Abschätzen von Wahrscheinlichkeiten}
+
+\begin{theorem}[Ungleichung von Markov]
+    $X \ge 0$ Zufallsvariable. Then, for all $t > 0 \in \mathbb{R}$:
+    \[ \Pr[X \ge t] \le \frac{\E[X]}{t}\ \mbox{und}\ \Pr[X \ge t \cdot \E[X]] \le \frac{1}{t} \]
+\end{theorem}
+
+\begin{theorem}[Ungleichung von Chebyshev]
+    $X$ Zufallsvariable and $t > 0 \in \mathbb{R}$. Then
+    \[ \Pr[|X - \E[X]| \ge t] \le \frac{Var[X]}{t^2} \]
+\end{theorem}
+
+\begin{theorem}[Ungleichung von Chernoff]
+    $X_1, ..., X_n$ independent Beroulli-verteilte Zufallsvariablen with $\Pr[X_i = 1] = p_i$ and $\Pr[X_i = 0] = 1 - p_i$.
+
+    Then for $X := \sum_{i=1}^n X_i$:
+    \begin{alignat}{2}
+         & \Pr[X \ge (1 + \delta)\E[X]] \le e^{-\frac{1}{3} \delta^2 \E[X]} & \mbox{for all}\ 0 < \delta \le 1 \\
+         & \Pr[X \ge (1 - \delta)\E[X]] \le e^{-\frac{1}{2} \delta^2 \E[X]} & \mbox{for all}\ 0 < \delta \le 1 \\
+         & \Pr[X \ge t] \le 2^{-t}                                          & \mbox{for}\ t \ge 2e \E[X]
+    \end{alignat}
+\end{theorem}
+
+\subsection{Randomized algorithms}
+\begin{theorem}
+    Let $\mathcal{A}$ be a randomized algorithm that always never gives a wrong answer, but outputs "???" when
+    \[ \Pr[\mathcal{A}(I)\ \mbox{correct}] \ge \epsilon \]
+
+    Then for all $\delta > 0$:
+    let $\mathcal{A}_\delta$ be the algorithm that calls $\mathcal{A}$ until either an answer different from "???" is returned ($\mathcal{A}_\delta$ gives
+    this answer) or until "???" is returned $N = \epsilon^{-1} \ln \delta^{-1}$ times ($\mathcal{A}_\delta$ returns "???").
+
+    Then the following is true:
+    \[ \Pr[\mathcal{A}_\delta\ \mbox{correct}] \ge 1 - \delta \]
+\end{theorem}
+
+\begin{theorem}
+    Let $\mathcal{A}$ be a randomized algorithm that always gives "Yes" or "No" as answers, where
+    \begin{alignat}{2}
+         & \Pr[\mathcal{A}(I) = \mbox{Yes}] = 1         &  & \quad\mbox{if the correct answer is Yes} \\
+         & \Pr[\mathcal{A}(I) = \mbox{No}] \ge \epsilon &  & \quad\mbox{if the correct answer is No}
+    \end{alignat}
+
+    Then for all $\delta > 0$: let $\mathcal{A}_\delta$ be the algorithm that calls $\mathcal{A}$ either until "No" is returned
+    (then it returns "No") or until "Yes" is returned $N = \epsilon^{-1} \ln \delta^{-1}$ times (then it returns "Yes").
+
+    Then for all instances $I$:
+    \[ \Pr[\mathcal{A}_\delta(I)\ \mbox{correct}] \ge 1 - \delta \]
+\end{theorem}
+
+\begin{theorem}
+    Let $\epsilon > 0$ and $\mathcal{A}$ be a randomized algorithm that always returns either "Yes" or "No",
+    Where
+    \[ \Pr[\mathcal{A}_\delta(I)\ \mbox{correct}] \ge \frac{1}{2} + \epsilon \]
+
+    Then for all $\delta > 0$:
+    let $\mathcal{A}_\delta$ be the algorihm that calls $\mathcal{A}$ a total of $N = 4 \epsilon^{-2} \ln \delta^{-1}$ times
+    and returns the answer that was encountered the most.
+
+    Then
+    \[ \Pr[\mathcal{A}_\delta(I) \ \mbox{correct}] \ge 1 - \delta \]
+\end{theorem}
+
+\begin{theorem}
+    Let $\epsilon > 0$ and $\mathcal{A}$ be a randomized algorithm for a \textit{Maximierungsproblem}, where
+    \[ \Pr[\mathcal{A}(I)\ \ge f(I)] \ge \epsilon  \]
+
+    Then for all $\delta > 0$:
+    let $\mathcal{A}_\delta$ be the algo that calls $\mathcal{A}$ a total of $N = \epsilon^{-1} \ln \delta^{-1}$ times
+    and returns the best answer. Then
+    \[ \Pr[\mathcal{A}_\delta(I) \ge f(I)] \ge 1 - \delta \]
+
+    Analogous for \textit{Minimierungsprobleme}, replace $\ge f(I)$ with $\le f(I)$.
+\end{theorem}
+
+\begin{note}
+    Stuff about random pivot selection for QuickSort and so on
+\end{note}
+
+\begin{theorem}[Kleiner fermatscher satz]
+    If $n \in \mathbb{N}$ is prime, then for all $0 < a < n$
+    \[ a^{n - 1} \equiv 1 \mod n \]
+\end{theorem}
+
+
+Target shooting:
+
+\begin{theorem}
+    Let $\delta,\epsilon > 0$. If $N \ge 3 \frac{|U|}{|S|} \cdot \epsilon^{-2} \cdot \ln(2 / \delta)$, then
+    the output of the algorithm Target-Shooting is in the interval $\left[ (1-\epsilon)\frac{|S|}{|U|},(1+\epsilon)\frac{|S|}{|U|} \right]$
+    with probability $1 - \delta$.
+\end{theorem}
+
+\section{Algorithmen}
+
+\subsection{Graphenalgorithmen}
 \end{document}
