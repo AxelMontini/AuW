@@ -28,7 +28,14 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: AuW-recap.tex
+      - name: Copy artifact to folder
+        run: mkdir pages && cp AuW-recap.pdf pages
       - uses: actions/upload-artifact@v2
         with:
           name: PDF
           path: AuW-recap.pdf
+      - name: Deploy to pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: pages
