@@ -29,8 +29,9 @@ jobs:
         with:
           root_file: AuW-recap.tex
       - name: Copy artifact to folder
-        run: mkdir pages && cp AuW-recap.pdf pages
-        run: echo '<meta http-equiv="refresh" content="0; url=https://axelmontini.github.io/AuW/AuW-recap.pdf">' > pages/index.html
+        run: |
+          mkdir pages && cp AuW-recap.pdf pages
+          echo '<meta http-equiv="refresh" content="0; url=https://axelmontini.github.io/AuW/AuW-recap.pdf">' > pages/index.html
       - uses: actions/upload-artifact@v2
         with:
           name: PDF
