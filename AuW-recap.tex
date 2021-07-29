@@ -510,7 +510,7 @@ Bernoulli, Binomial, Geometrische, Poisson
     Then for $X := \sum_{i=1}^n X_i$:
     \begin{alignat}{2}
          & \Pr[X \ge (1 + \delta)\E[X]] \le e^{-\frac{1}{3} \delta^2 \E[X]} & \mbox{for all}\ 0 < \delta \le 1 \\
-         & \Pr[X \ge (1 - \delta)\E[X]] \le e^{-\frac{1}{2} \delta^2 \E[X]} & \mbox{for all}\ 0 < \delta \le 1 \\
+         & \Pr[X \le (1 - \delta)\E[X]] \le e^{-\frac{1}{2} \delta^2 \E[X]} & \mbox{for all}\ 0 < \delta \le 1 \\
          & \Pr[X \ge t] \le 2^{-t}                                          & \mbox{for}\ t \ge 2e \E[X]
     \end{alignat}
 \end{theorem}
