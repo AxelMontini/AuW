@@ -11,15 +11,16 @@
 \usepackage{todonotes}
 
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}
+\newtheorem{definition}{Definition}[section]
 \theoremstyle{remark}
-\newtheorem{note}{Note}
+\newtheorem{note}[definition]{Note}
 \theoremstyle{plain}
-\newtheorem{theorem}{Theorem}
+\newtheorem{theorem}[definition]{Theorem}
 \theoremstyle{plain}
-\newtheorem{lemma}{Lemma}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
 \theoremstyle{plain}
-\newtheorem{corollary}{Corollary}
+\newtheorem{corollary}[definition]{Corollary}
 
 \newcommand{\BO}{\mathcal{O}}
 \newcommand{\E}{\mathbb{E}}
@@ -588,4 +589,168 @@ Target shooting:
 \section{Algorithmen}
 
 \subsection{Graphenalgorithmen}
+
+\subsubsection{Lange Pfade}
+Given a graph $G$, determine whether it contains a path of length $B \in N_0$.
+
+Call this \textit{Long-Path Problem}.
+\begin{theorem}
+    If \textit{Long-Path} can be computed in $t(n)$, then it can be detemined whether a graph contains a
+    Hamiltonkreis in time $t(2n - 2) + \BO(n^2)$.
+\end{theorem}
+
+\subsubsection{Bunte Pfade}
+A variation.
+In a colored graph $G$, a path is \textit{bunt} when all vertices in the path
+have different colors.
+
+Random Bunte Pfade:
+\begin{theorem}
+    Let $G$ be a graph with a path of length $k - 1$.
+    \begin{enumerate}
+        \item A random coloring with $k$ colors creates a bunten Pfad of length $k - 1$ with probability $p_s \ge e^{-k}$.
+        \item On repeated random colorings with $k$ colors the Erwartungswert of the amount of trials needed to find a bunten
+              Pfad of length $k-1$ is $\frac{1}{p_s} \le e^k$
+    \end{enumerate}
+\end{theorem}
+
+\begin{theorem}
+    A Monte Carlo algorithm for this problem:
+    Choose a $\lambda > 1$ and repeat the test at most $\lceil \lambda e^k \rceil$ times until
+    it reports that a bunte path of length $k - 1$ exists. In this case, the anwser is "Yes", otherwise "No".
+
+    \begin{enumerate}
+        \item Running time of the algo is $\BO(\lambda(2e)^k km)$
+        \item If the algorithm answers "Yes", then the graph has a colorful Path of length $k - 1$.
+        \item If the graph has a colorful Path, the probability of a "No" answer is $\le e^{-\lambda}$
+    \end{enumerate}
+\end{theorem}
+
+\subsection{Flows and Networks}
+
+
+\subsubsection{Definition, Max flow, Min cut}
+\begin{definition}[Network]
+    A \textit{Network} is a tuple $N = (V, A, c, s, t)$, where
+    \begin{itemize}
+        \item $(V, A)$ is a directed graph
+        \item $s \in V$ is the source (Quelle)
+        \item $t \in V$ is the target/sink (Senke)
+        \item $C: A \to \mathbb{R}^+_0$ is the capacity function.
+    \end{itemize}
+\end{definition}
+
+\begin{definition}[Flow]
+    Given a network $N = (V, A, c, s, t)$, a \textit{flow} in $N$ is a function $f: A \to \mathbb{R}$ with the
+    properties:
+    \begin{itemize}
+        \item $0 \le f(e) \le c(e)$ for all $e \in A$, die Zulässigkeit.
+        \item For all $v \in V \setminus \left\{ s, t \right\}$ the following is true (Flusserhaltung):
+              \[ \sum_{u \in V:\ (u, v) \in A} f(u, v) = \sum_{u \in V:\ (v, u) \in A} f(v, u) \]
+        \item The \textit{Wert/value} of a flow $f$ is defined as
+        \item \[ val(f) := netoutflow(s) := \sum_{u \in V:\ (s, u) \in A} f(s, u) - \sum_{u \in V:\ (u, s) \in A} f(u, s) \]
+    \end{itemize}
+\end{definition}
+
+\begin{lemma}
+    The netinflow of the target/sink is equal to the flow value
+    \[ netinflow(t) := val(f) \]
+\end{lemma}
+
+\begin{definition}[S-T Schnitt]
+    An s-t-Schnitt (s-t-cut) for a network $N = (V, A, c, s, t)$ is a partition $(S, T)$ of $V$ (meaning that
+    $S \cup T = V$ and $S \cap T = \emptyset$) with $s \in S$ and $t \in T$.
+
+    The \textit{capacity} of the s-t-cut is defined as
+    \[ cap(S, T) := \sum_{(u, w) \in (S \times T) \cap A} c(u, w) \]
+\end{definition}
+
+\begin{lemma}
+    Let $f$ be a flow and $(S, T)$ an s-t-cut in the network $N = (V, A, c, s, t)$.
+    Then
+    \[ val(f) \le cap(S, T) \]
+\end{lemma}
+
+\begin{theorem}[Maxflow-Mincut]
+    \[ \max_{f\ \mbox{flow in}\ N} val(f) = \min_{(S, T)\ \mbox{s-t-cut in}\ N} cap(S, T) \]
+\end{theorem}
+
+\begin{definition}[Restnetzwerk]
+    Let $N = (V, A, c, s, t)$ be a network without reversed edges.
+
+    The \textit{Restnetzwerk} $N_f := (V, A_f, r_f, s, t)$ is defined as follows:
+    \begin{enumerate}
+        \item $e \in A$ and $f(e) < c(e)$, then $e \in A_f$ and $r_f(e) = c(e) - f(e)$.
+        \item $e \in A$ and $f(e) > 0$, then $e^{opp} \in A_f$ and $r_f(e^{opp}) = f(e)$
+        \item Edges not satisfying any of the two above contitions are not in the Restnetzwerk.
+    \end{enumerate}
+
+    $r_f(e), e \in A_f$ is called the \textit{Restkapazität} of the edge $e$.
+\end{definition}
+
+\begin{theorem}
+    A flow $f$ in a network $N$ is a max flow \textbf{if and only if}
+    there is no directed path from $s$ to $t$ in the Restnetzwerk $N_f$.
+
+    For every max flow there's a min s-t-cut.
+\end{theorem}
+
+\begin{theorem}
+    The following algorithm computes the max flow.
+    \begin{algorithm}
+        \caption{Ford-Fulkerson}
+        \KwData{$(V, A, c, s, t)$}
+        \KwResult{A max flow}
+        $f \gets 0$\;
+
+        \While(\tcp*[h]{Augmenting path}){$\exists$ s-t-path $P$ in $(V, A_f)$}{
+            $\epsilon$ smallest Restkapazität on the path $P$\;
+            \ForEach(\tcp*[h]{Increase flow along the path}){$e \in A$}{
+                \If{$e$ on $P$}{
+                    $f'(e) = f(e) + \epsilon$\;
+                }
+                \ElseIf{$e^{opp}$ on $P$}{
+                    $f'(e) = f(e) - \epsilon$\;
+                }
+                \Else{
+                    $f'(e) = f(e)$\;
+                }
+            }
+        }
+        \Return{$f$}
+    \end{algorithm}
+
+    If the network has no reversed edges and all capacities are integers $\le U$, then there's
+    an integer maxflow that can be computed in time $\BO(mnU)$ ($m$ amount of edges, $n$ amount of vertices).
+\end{theorem}
+
+
+\begin{proposition}[Capacity-Scaling, Dinitz-GAbow, 1973]
+    If all capacities in a network are integers and at most $U$, then
+    there's an integer maxflow that can be computed in time $\BO(mn(1 + \log U))$
+\end{proposition}
+
+\begin{proposition}[Dynamic Trees, Sleaton-Tarjan, 1983]
+    The maxflow of a network $N$ can be computed in time $\BO(mn \log n)$
+\end{proposition}
+
+\subsubsection{Bipartite matching as flow problem}
+
+\begin{theorem}
+    Let $G = (V, E)$ be a bipartite graph, so there's a partition $(U, W)$ of $V$ so that $E \subseteq \left\{ \left\{ u, w \right\} \mid u \in U, w \in W \right\}$
+
+    We're looking for the biggest matching in $G$.
+
+    Define a network $N = (V \cup \left\{ s, t \right\}, A, c, s, t)$, so that
+    \begin{enumerate}
+        \item The vertices are the same as in the graph, plus $s$ and $t$.
+        \item The capacity function $c$ is constant $1$.
+        \item Define the edges as:
+              \[ A := (\{ s \} \times U) \cup \left\{ (u, w) \in U \times W \mid \{ u, w \} \in E \right\} \cup (W \times \{t\})\]
+    \end{enumerate}
+
+    The size of the biggest matching in the bipartite graph $G$ is $maxflow(N)$.
+\end{theorem}
+
+
 \end{document}
